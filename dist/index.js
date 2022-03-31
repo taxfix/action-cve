@@ -441,7 +441,7 @@ const entities_1 = __nccwpck_require__(7604);
 const github_1 = __nccwpck_require__(5438);
 const core_1 = __nccwpck_require__(2186);
 const fetchAlerts = (gitHubPersonalAccessToken, repositoryName, repositoryOwner, count, severities) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a, _b, _c;
+    var _a;
     const octokit = (0, github_1.getOctokit)(gitHubPersonalAccessToken);
     const { repository } = yield octokit.graphql(`
     query {
@@ -496,10 +496,13 @@ const fetchAlerts = (gitHubPersonalAccessToken, repositoryName, repositoryOwner,
     if (gitHubAlerts) {
         const alerts = [];
         for (const gitHubAlert of gitHubAlerts) {
-            if (gitHubAlert && gitHubAlert.node && severities.some(severity => { var _a, _b; return severity.toLowerCase() === ((_b = (_a = gitHubAlert.node) === null || _a === void 0 ? void 0 : _a.securityAdvisory) === null || _b === void 0 ? void 0 : _b.severity.toLowerCase()); })) {
+            if (gitHubAlert
+                && gitHubAlert.node
+                && severities.some(severity => { var _a, _b; return severity.toLowerCase() === ((_b = (_a = gitHubAlert.node) === null || _a === void 0 ? void 0 : _a.securityAdvisory) === null || _b === void 0 ? void 0 : _b.severity.toLowerCase()); })) {
+                const createdAt = new Date(gitHubAlert.node.createdAt);
+                const createdHoursAgo = Math.floor((Date.now() - createdAt.getTime()) / (3600 * 1000));
                 (0, core_1.debug)(`id ${gitHubAlert.node.id}`);
-                (0, core_1.debug)(`createdAt ${(_b = gitHubAlert.node) === null || _b === void 0 ? void 0 : _b.createdAt}`);
-                (0, core_1.debug)(`dismissedAt ${(_c = gitHubAlert.node) === null || _c === void 0 ? void 0 : _c.dismissedAt}`);
+                (0, core_1.debug)(`created ${createdHoursAgo} hours ago`);
                 (0, core_1.debug)('\n');
                 alerts.push((0, entities_1.toAlert)(gitHubAlert.node));
             }

@@ -66,10 +66,14 @@ export const fetchAlerts = async (
   if (gitHubAlerts) {
     const alerts: Alert[] = []
     for (const gitHubAlert of gitHubAlerts) {
-      if (gitHubAlert && gitHubAlert.node && severities.some(severity => severity.toLowerCase() === gitHubAlert.node?.securityAdvisory?.severity.toLowerCase())) {
+      if (gitHubAlert 
+        && gitHubAlert.node 
+        && severities.some(severity => severity.toLowerCase() === gitHubAlert.node?.securityAdvisory?.severity.toLowerCase())
+        ) {
+          const createdAt = new Date(gitHubAlert.node.createdAt)
+          const createdHoursAgo =  Math.floor((Date.now() - createdAt.getTime())/(3600*1000));
         debug(`id ${gitHubAlert.node.id}`)
-        debug(`createdAt ${gitHubAlert.node?.createdAt}`)
-        debug(`dismissedAt ${gitHubAlert.node?.dismissedAt}`)
+        debug(`created ${createdHoursAgo} hours ago`)
         debug('\n')
         alerts.push(toAlert(gitHubAlert.node))
       }
