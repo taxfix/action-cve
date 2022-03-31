@@ -1,4 +1,4 @@
-import { getInput, setFailed, debug } from '@actions/core'
+import { getInput, setFailed, info } from '@actions/core'
 import {
   sendAlertsToMicrosoftTeams,
   sendAlertsToPagerDuty,
@@ -22,11 +22,11 @@ async function run(): Promise<void> {
     const severities = getInput('severities').split(',') || ["Critical","High"]
     const owner = context.repo.owner
     const repo = context.repo.repo
-    debug('severities:')
-    debug(JSON.stringify(severities))
+    info('severities:')
+    info(JSON.stringify(severities))
     const alerts = await fetchAlerts(token, repo, owner, count, severities);
-    debug('alerts:')
-    debug(JSON.stringify(alerts))
+    info('alerts:')
+    info(JSON.stringify(alerts))
     if (alerts.length > 0) {
       if (microsoftTeamsWebhookUrl) {
         await sendAlertsToMicrosoftTeams(microsoftTeamsWebhookUrl, alerts)
