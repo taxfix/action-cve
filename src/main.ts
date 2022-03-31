@@ -22,9 +22,11 @@ async function run(): Promise<void> {
     const severities = getInput('severities').split(',') || ["Critical","High"]
     const owner = context.repo.owner
     const repo = context.repo.repo
-    debug('severities',severities);
+    debug('severities:')
+    debug(JSON.stringify(severities))
     const alerts = await fetchAlerts(token, repo, owner, count, severities);
-    debug('alerts',alerts);
+    debug('alerts:')
+    debug(JSON.stringify(alerts))
     if (alerts.length > 0) {
       if (microsoftTeamsWebhookUrl) {
         await sendAlertsToMicrosoftTeams(microsoftTeamsWebhookUrl, alerts)
