@@ -67,12 +67,12 @@ export const sendAlertsToSlack = async (
   }
   await webhook.send({
     blocks: [
+      createDividerBlock(),
       createSummaryBlock(
         alerts.length,
         alerts[0].repository.name,
         alerts[0].repository.owner,
       ),
-      createDividerBlock(),
       ...alertBlocks,
     ],
     icon_url: ACTION_ICON,

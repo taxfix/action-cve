@@ -186,7 +186,7 @@ const createSummaryBlock = (alertCount, repositoryName, repositoryOwner) => {
         type: 'section',
         text: {
             type: 'mrkdwn',
-            text: `You have ${alertCount} vulnerabilities in *${repositoryOwner}/${repositoryName}*`,
+            text: `You have ${alertCount} new vulnerabilities in *${repositoryOwner}/${repositoryName}*`,
         },
     };
 };
@@ -234,8 +234,8 @@ const sendAlertsToSlack = (webhookUrl, alerts) => __awaiter(void 0, void 0, void
     }
     yield webhook.send({
         blocks: [
-            createSummaryBlock(alerts.length, alerts[0].repository.name, alerts[0].repository.owner),
             createDividerBlock(),
+            createSummaryBlock(alerts.length, alerts[0].repository.name, alerts[0].repository.owner),
             ...alertBlocks,
         ],
         icon_url: constants_1.ACTION_ICON,
