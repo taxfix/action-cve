@@ -445,7 +445,7 @@ const fetchAlerts = (gitHubPersonalAccessToken, repositoryName, repositoryOwner,
     const { repository } = yield octokit.graphql(`
     query {
       repository(owner:"${repositoryOwner}" name:"${repositoryName}") {
-        vulnerabilityAlerts(filter:{ severity: [${severities.map(severity => `"${severity}"`)}]} last: ${count}) {
+        vulnerabilityAlerts(last: ${count}) {
           edges {
             node {
               id
@@ -493,7 +493,7 @@ const fetchAlerts = (gitHubPersonalAccessToken, repositoryName, repositoryOwner,
     if (gitHubAlerts) {
         const alerts = [];
         for (const gitHubAlert of gitHubAlerts) {
-            if (gitHubAlert && gitHubAlert.node) {
+            if (gitHubAlert && gitHubAlert.node && severities.some(severity => { var _a, _b; return severity.toLowerCase() === ((_b = (_a = gitHubAlert.node) === null || _a === void 0 ? void 0 : _a.securityAdvisory) === null || _b === void 0 ? void 0 : _b.severity.toLowerCase()); })) {
                 alerts.push((0, entities_1.toAlert)(gitHubAlert.node));
             }
         }
