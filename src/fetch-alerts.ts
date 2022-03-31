@@ -1,6 +1,7 @@
 import { Alert, toAlert } from './entities'
 import { Repository } from '@octokit/graphql-schema'
 import { getOctokit } from '@actions/github'
+import { debug } from '@actions/core'
 
 export const fetchAlerts = async (
   gitHubPersonalAccessToken: string,
@@ -63,7 +64,11 @@ export const fetchAlerts = async (
   if (gitHubAlerts) {
     const alerts: Alert[] = []
     for (const gitHubAlert of gitHubAlerts) {
-      if (gitHubAlert && gitHubAlert.node && severities.some(severity => severity.toLowerCase() === gitHubAlert.node?.securityAdvisory?.severity.toLowerCase() ) ) {
+      if (gitHubAlert && gitHubAlert.node && severities.some(severity => severity.toLowerCase() === gitHubAlert.node?.securityAdvisory?.severity.toLowerCase())) {
+        debug(`id ${gitHubAlert.node.id}`)
+        debug(`createdAt ${gitHubAlert.node?.createdAt}`)
+        debug(`dismissedAt ${gitHubAlert.node?.dismissedAt}`)
+        debug('\n')
         alerts.push(toAlert(gitHubAlert.node))
       }
     }
