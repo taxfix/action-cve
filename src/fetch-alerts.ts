@@ -7,6 +7,7 @@ export const fetchAlerts = async (
   repositoryName: string,
   repositoryOwner: string,
   count: number,
+  severities: string[],
 ): Promise<Alert[] | []> => {
   const octokit = getOctokit(gitHubPersonalAccessToken)
   const { repository } = await octokit.graphql<{
@@ -14,7 +15,7 @@ export const fetchAlerts = async (
   }>(`
     query {
       repository(owner:"${repositoryOwner}" name:"${repositoryName}") {
-        vulnerabilityAlerts(last: ${count}) {
+        vulnerabilityAlerts(filter:{ severity: [${severities.map(severity => `"${severity}"`)}]} last: ${count}) {
           edges {
             node {
               id

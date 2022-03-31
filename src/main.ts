@@ -19,9 +19,10 @@ async function run(): Promise<void> {
     const zenDutyServiceId = getInput('zenduty_service_id')
     const zenDutyEscalationPolicyId = getInput('zenduty_escalation_policy_id')
     const count = parseInt(getInput('count'))
+    const severities = getInput('severities').split(',') || ["Critical","High","Moderate","Low"]
     const owner = context.repo.owner
     const repo = context.repo.repo
-    const alerts = await fetchAlerts(token, repo, owner, count)
+    const alerts = await fetchAlerts(token, repo, owner, count, severities);
     if (alerts.length > 0) {
       if (microsoftTeamsWebhookUrl) {
         await sendAlertsToMicrosoftTeams(microsoftTeamsWebhookUrl, alerts)
