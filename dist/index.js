@@ -439,13 +439,13 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.fetchAlerts = void 0;
 const entities_1 = __nccwpck_require__(7604);
 const github_1 = __nccwpck_require__(5438);
-const fetchAlerts = (gitHubPersonalAccessToken, repositoryName, repositoryOwner, count) => __awaiter(void 0, void 0, void 0, function* () {
+const fetchAlerts = (gitHubPersonalAccessToken, repositoryName, repositoryOwner, count, severities) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
     const octokit = (0, github_1.getOctokit)(gitHubPersonalAccessToken);
     const { repository } = yield octokit.graphql(`
     query {
       repository(owner:"${repositoryOwner}" name:"${repositoryName}") {
-        vulnerabilityAlerts(last: ${count}) {
+        vulnerabilityAlerts(filter:{ severity: [${severities.map(severity => `"${severity}"`)}]} last: ${count}) {
           edges {
             node {
               id
@@ -536,9 +536,14 @@ function run() {
             const zenDutyServiceId = (0, core_1.getInput)('zenduty_service_id');
             const zenDutyEscalationPolicyId = (0, core_1.getInput)('zenduty_escalation_policy_id');
             const count = parseInt((0, core_1.getInput)('count'));
+            const severities = (0, core_1.getInput)('severities').split(',') || ["Critical", "High"];
             const owner = github_1.context.repo.owner;
             const repo = github_1.context.repo.repo;
-            const alerts = yield (0, fetch_alerts_1.fetchAlerts)(token, repo, owner, count);
+            (0, core_1.debug)('severities:');
+            (0, core_1.debug)(JSON.stringify(severities));
+            const alerts = yield (0, fetch_alerts_1.fetchAlerts)(token, repo, owner, count, severities);
+            (0, core_1.debug)('alerts:');
+            (0, core_1.debug)(JSON.stringify(alerts));
             if (alerts.length > 0) {
                 if (microsoftTeamsWebhookUrl) {
                     yield (0, destinations_1.sendAlertsToMicrosoftTeams)(microsoftTeamsWebhookUrl, alerts);
