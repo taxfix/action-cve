@@ -16,7 +16,7 @@ export const fetchAlerts = async (
   }>(`
     query {
       repository(owner:"${repositoryOwner}" name:"${repositoryName}") {
-        vulnerabilityAlerts(last: ${count}) {
+        vulnerabilityAlerts(last: ${count} states: OPEN) {
           edges {
             node {
               id
