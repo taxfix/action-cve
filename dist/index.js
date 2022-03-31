@@ -450,6 +450,8 @@ const fetchAlerts = (gitHubPersonalAccessToken, repositoryName, repositoryOwner,
           edges {
             node {
               id
+              createdAt
+              dismissedAt
               repository {
                 name
                 owner {
