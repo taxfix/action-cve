@@ -19,11 +19,12 @@ async function run(): Promise<void> {
     const zenDutyServiceId = getInput('zenduty_service_id')
     const zenDutyEscalationPolicyId = getInput('zenduty_escalation_policy_id')
     const count = parseInt(getInput('count'))
-    const severities = getInput('severities').split(',') || ["Critical","High"]
+    const repeatsAfterHours = parseInt(getInput('repeatsAfterHours')) || Number.MAX_SAFE_INTEGER;
+    const severities = getInput('severities').split(',')
     const owner = context.repo.owner
     const repo = context.repo.repo
-    debug(`severities = JSON.stringify(severities)`)
-    const alerts = await fetchAlerts(token, repo, owner, count, severities);
+    debug(`severities = ${JSON.stringify(severities)}`)
+    const alerts = await fetchAlerts(token, repo, owner, count, severities, repeatsAfterHours);
     debug(`${alerts.length} alerts found`);
     if (alerts.length > 0) {
       if (microsoftTeamsWebhookUrl) {

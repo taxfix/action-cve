@@ -439,8 +439,7 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.fetchAlerts = void 0;
 const entities_1 = __nccwpck_require__(7604);
 const github_1 = __nccwpck_require__(5438);
-const core_1 = __nccwpck_require__(2186);
-const fetchAlerts = (gitHubPersonalAccessToken, repositoryName, repositoryOwner, count, severities) => __awaiter(void 0, void 0, void 0, function* () {
+const fetchAlerts = (gitHubPersonalAccessToken, repositoryName, repositoryOwner, count, severities, createdInLastHours) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
     const octokit = (0, github_1.getOctokit)(gitHubPersonalAccessToken);
     const { repository } = yield octokit.graphql(`
@@ -500,11 +499,9 @@ const fetchAlerts = (gitHubPersonalAccessToken, repositoryName, repositoryOwner,
                 && gitHubAlert.node
                 && severities.some(severity => { var _a, _b; return severity.toLowerCase() === ((_b = (_a = gitHubAlert.node) === null || _a === void 0 ? void 0 : _a.securityAdvisory) === null || _b === void 0 ? void 0 : _b.severity.toLowerCase()); })) {
                 const createdAt = new Date(gitHubAlert.node.createdAt);
-                const createdHoursAgo = Math.floor((Date.now() - createdAt.getTime()) / (3600 * 1000));
-                (0, core_1.debug)(`id ${gitHubAlert.node.id}`);
-                (0, core_1.debug)(`created ${createdHoursAgo} hours ago`);
-                (0, core_1.debug)('\n');
-                alerts.push((0, entities_1.toAlert)(gitHubAlert.node));
+                const createdHoursAgo = (Date.now() - createdAt.getTime()) / (3600 * 1000);
+                if (createdHoursAgo < createdInLastHours)
+                    alerts.push((0, entities_1.toAlert)(gitHubAlert.node));
             }
         }
         return alerts;
@@ -546,11 +543,12 @@ function run() {
             const zenDutyServiceId = (0, core_1.getInput)('zenduty_service_id');
             const zenDutyEscalationPolicyId = (0, core_1.getInput)('zenduty_escalation_policy_id');
             const count = parseInt((0, core_1.getInput)('count'));
-            const severities = (0, core_1.getInput)('severities').split(',') || ["Critical", "High"];
+            const repeatsAfterHours = parseInt((0, core_1.getInput)('repeatsAfterHours')) || Number.MAX_SAFE_INTEGER;
+            const severities = (0, core_1.getInput)('severities').split(',');
             const owner = github_1.context.repo.owner;
             const repo = github_1.context.repo.repo;
-            (0, core_1.debug)(`severities = JSON.stringify(severities)`);
-            const alerts = yield (0, fetch_alerts_1.fetchAlerts)(token, repo, owner, count, severities);
+            (0, core_1.debug)(`severities = ${JSON.stringify(severities)}`);
+            const alerts = yield (0, fetch_alerts_1.fetchAlerts)(token, repo, owner, count, severities, repeatsAfterHours);
             (0, core_1.debug)(`${alerts.length} alerts found`);
             if (alerts.length > 0) {
                 if (microsoftTeamsWebhookUrl) {

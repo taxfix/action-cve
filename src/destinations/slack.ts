@@ -12,7 +12,7 @@ const createSummaryBlock = (
     type: 'section',
     text: {
       type: 'mrkdwn',
-      text: `You have ${alertCount} vulnerabilities in *${repositoryOwner}/${repositoryName}*`,
+      text: `You have ${alertCount} new vulnerabilities in *${repositoryOwner}/${repositoryName}*`,
     },
   }
 }

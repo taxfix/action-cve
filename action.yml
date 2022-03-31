@@ -18,6 +18,10 @@ inputs:
     description: 'Zenduty Escalation Policy ID: https://docs.zenduty.com/docs/escalationpolicies'
   severities: 
     description: 'List of severities to filter the vulnerabilites'
+    default: 'Critical,High,Moderate,Low'
+  repeatsAfterHours:
+    description: 'Number of hours that action repeats after'
+    default: 0
   count:
     description: 'Number of vulnerability alerts to send'
     default: 20

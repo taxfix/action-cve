@@ -9,6 +9,7 @@ export const fetchAlerts = async (
   repositoryOwner: string,
   count: number,
   severities: string[],
+  createdInLastHours: number,
 ): Promise<Alert[] | []> => {
   const octokit = getOctokit(gitHubPersonalAccessToken)
   const { repository } = await octokit.graphql<{
@@ -71,11 +72,8 @@ export const fetchAlerts = async (
         && severities.some(severity => severity.toLowerCase() === gitHubAlert.node?.securityAdvisory?.severity.toLowerCase())
         ) {
           const createdAt = new Date(gitHubAlert.node.createdAt)
-          const createdHoursAgo =  Math.floor((Date.now() - createdAt.getTime())/(3600*1000));
-        debug(`id ${gitHubAlert.node.id}`)
-        debug(`created ${createdHoursAgo} hours ago`)
-        debug('\n')
-        alerts.push(toAlert(gitHubAlert.node))
+          const createdHoursAgo =  (Date.now() - createdAt.getTime())/(3600*1000);
+          if(createdHoursAgo < createdInLastHours) alerts.push(toAlert(gitHubAlert.node))
       }
     }
     return alerts
