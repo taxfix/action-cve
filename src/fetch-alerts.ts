@@ -15,7 +15,7 @@ export const fetchAlerts = async (
   }>(`
     query {
       repository(owner:"${repositoryOwner}" name:"${repositoryName}") {
-        vulnerabilityAlerts(filter:{ severity: [${severities.map(severity => `"${severity}"`)}]} last: ${count}) {
+        vulnerabilityAlerts(last: ${count}) {
           edges {
             node {
               id
@@ -63,7 +63,7 @@ export const fetchAlerts = async (
   if (gitHubAlerts) {
     const alerts: Alert[] = []
     for (const gitHubAlert of gitHubAlerts) {
-      if (gitHubAlert && gitHubAlert.node) {
+      if (gitHubAlert && gitHubAlert.node && severities.some(severity => severity.toLowerCase() === gitHubAlert.node?.securityAdvisory?.severity.toLowerCase() ) ) {
         alerts.push(toAlert(gitHubAlert.node))
       }
     }
