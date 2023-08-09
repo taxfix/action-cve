@@ -1,0 +1,13 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: action-cve
+  description: Send GitHub vulnerability alerts to multiple platforms
+  annotations: []
+spec:
+  type: tool
+  lifecycle: production
+  domain: tech-foundation
+  system: security
+  owner: security
+relations: []
