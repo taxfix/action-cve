@@ -5,7 +5,7 @@ metadata:
   description: Send GitHub vulnerability alerts to multiple platforms
 spec:
   type: tool
-  lifecycle: production
+  lifecycle: deprecated
   domain: tech-foundation
   system: security
   owner: security
